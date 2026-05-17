@@ -16,6 +16,7 @@
 - Uses SmarterCSV for parsing CSV input
 - Preserves Roo's single-sheet CSV behavior
 - Supports Roo's `Roo::Spreadsheet.open(...)` entry point
+- Supports CSV export through Roo's existing `to_csv`
 - Uses SmarterCSV defaults unless you override them
 
 ## Installation
@@ -58,6 +59,18 @@ It supports:
 - tab-delimited input via `col_sep: "\t"`
 - SmarterCSV type conversion
 - warnings emitted by SmarterCSV
+- Roo's `to_csv` export for the in-memory spreadsheet representation
+
+## Architecture note
+
+SmarterCSV is used as the parser, but Roo remains the public model.
+
+That means:
+
+- SmarterCSV row hashes are an internal parsing representation
+- Roo still stores data in its coordinate-based cell grid
+- Roo's public API remains spreadsheet-like
+- hash-based rows are only an intermediate step for parser-to-grid conversion
 
 ## Option precedence
 
@@ -102,6 +115,15 @@ Only these four keys are copied from `csv_options` into the effective SmarterCSV
 4. If the same key exists in both places, `smarter_csv` wins.
 5. Conflicts emit a warning.
 
+Only the following Roo-compatible CSV keys are bridged from `csv_options`:
+
+- `col_sep`
+- `row_sep`
+- `quote_char`
+- `encoding`
+
+No other Roo options are treated as CSV parser settings.
+
 ### Examples
 
 #### Only Roo options
@@ -143,6 +165,8 @@ Some important defaults are:
 - `remove_empty_hashes: true`
 - `headers_in_file: true`
 
+This means common CSV files work without extra configuration, and SmarterCSV can infer separators and convert numeric values automatically.
+
 ### Default behavior examples
 
 #### Auto-detected separator
@@ -160,18 +184,9 @@ spreadsheet.cell(2, 2)   # => 30
 spreadsheet.cell(2, 4)   # => 1.5
 ```
 
-#### Headers become downcased symbols internally
+#### Headers and keys
 
-SmarterCSV returns hashes with symbol keys by default:
-
-```ruby
-spreadsheet.parse(headers: true)
-# => [{ "Name" => "Name", ... }, { "Name" => "John", ... }]
-```
-
-Internally, the parsed row data is still available through the Roo cell API as spreadsheet-like rows.
-
-If you explicitly use SmarterCSV's default row hashes directly, keys are symbols by default:
+SmarterCSV downcases headers by default and returns symbol keys:
 
 ```ruby
 SmarterCSV.process(StringIO.new("Name,Email\nJohn,john@example.com\n")).first
@@ -181,9 +196,14 @@ SmarterCSV.process(StringIO.new("Name,Email\nJohn,john@example.com\n")).first
 If you want string keys instead, SmarterCSV supports:
 
 ```ruby
-SmarterCSV.process(StringIO.new("Name,Email\nJohn,john@example.com\n"), strings_as_keys: true).first
+SmarterCSV.process(
+  StringIO.new("Name,Email\nJohn,john@example.com\n"),
+  strings_as_keys: true
+).first
 # => { "name" => "John", "email" => "john@example.com" }
 ```
+
+In `roo-smarter_csv`, those row hashes are used internally to populate Roo's spreadsheet grid. The public Roo methods still behave like spreadsheet methods.
 
 ## Examples
 
