@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require "roo/smarter_csv"
+require "rspec"
+require "roo-smarter_csv"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

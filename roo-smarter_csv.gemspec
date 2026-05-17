@@ -1,13 +1,12 @@
 # encoding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'roo/smarter_csv/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "roo-smarter_csv"
-  spec.version       = Roo::SmarterCSV::VERSION
-  spec.authors       = ["Your Name"]
-  spec.email         = ["your.email@example.com"]
+  spec.version       = "0.1.0"
+  spec.authors       = ["Tilo Sloboda"]
+  spec.email         = ["tilo.slobodal@gmail.com"]
   spec.summary       = "High-performance CSV support for Roo using SmarterCSV"
   spec.description   = "Extends Roo with SmarterCSV integration for robust, fast CSV parsing"
   spec.homepage      = "https://github.com/yourusername/roo-smarter_csv"
@@ -21,7 +20,7 @@ Gem::Specification.new do |spec|
 
   # Dependencies
   spec.add_dependency "roo", ">= 2.0.0", "< 4"
-  spec.add_dependency "smarter_csv", ">= 1.15.0"
+  spec.add_dependency "smarter_csv", ">= 1.15.0" # it is recommended to use the latest version
 
   # Development dependencies
   spec.add_development_dependency "bundler", ">= 1.7"

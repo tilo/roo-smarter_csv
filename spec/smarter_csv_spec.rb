@@ -1,9 +1,8 @@
-require 'rspec'
-require 'roo'
-require 'roo-smarter_csv'
+require 'spec_helper'
 
-describe Roo::SmarterCSV do
+RSpec.describe Roo::SmarterCSV do
   let(:csv_path) { File.expand_path('../fixtures/sample.csv', __FILE__) }
+  let(:tsv_path) { File.expand_path('../fixtures/sample.tsv', __FILE__) }
   let(:csv) { Roo::SmarterCSV.new(csv_path) }
 
   describe 'Roo interface' do
@@ -48,7 +47,8 @@ describe Roo::SmarterCSV do
       data = csv.parse(headers: true)
       expect(data.first).to be_a(Hash)
       expect(data.first.keys).to eq(['Name', 'Age', 'Email', 'Salary'])
-      expect(data.first['Name']).to eq('John')
+      expect(data.first['Name']).to eq('Name')
+      expect(data[1]['Name']).to eq('John')
     end
   end
 
@@ -68,6 +68,18 @@ describe Roo::SmarterCSV do
     it 'can be opened via Roo::Spreadsheet.open' do
       spreadsheet = Roo::Spreadsheet.open(csv_path)
       expect(spreadsheet).to be_a(Roo::SmarterCSV)
+      expect(spreadsheet.cell(2, 1)).to eq('John')
+    end
+
+    it 'accepts csv_options from Roo and bridges them into SmarterCSV' do
+      spreadsheet = Roo::Spreadsheet.open(tsv_path, extension: :csv, csv_options: { col_sep: "\t" })
+      expect(spreadsheet.cell(2, 1)).to eq('John')
+      expect(spreadsheet.cell(2, 4)).to eq(50000)
+    end
+
+    it 'prefers smarter_csv options over csv_options and emits a warning' do
+      spreadsheet = Roo::SmarterCSV.new(csv_path, csv_options: { col_sep: ';' }, smarter_csv: { col_sep: ',' })
+      expect { spreadsheet.cell(2, 1) }.to output(/conflicting option col_sep/).to_stderr
       expect(spreadsheet.cell(2, 1)).to eq('John')
     end
   end
