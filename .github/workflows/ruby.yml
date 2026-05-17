@@ -59,6 +59,11 @@ jobs:
           slug: tilo/roo-smarter_csv
           files: coverage/.resultset.json
           fail_ci_if_error: false
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   finish:
     runs-on: ubuntu-latest
