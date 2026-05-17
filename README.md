@@ -11,6 +11,9 @@
 - **SmarterCSV is 3-4.6x faster than Roo::CSV**
 - SmarterCSV automatically detects `col_sep`, `row_sep`
 - SmarterCSV is more robust against real-world data
+- See [Ruby CSV Pitfalls](https://github.com/tilo/smarter_csv/blob/main/docs/ruby_csv_pitfalls.md) for examples of silent data loss and corruption cases in Ruby CSV
+- See [Migrating from Ruby CSV](https://github.com/tilo/smarter_csv/blob/main/docs/migrating_from_csv.md) for behavior differences and migration guidance
+- See [SmarterCSV 1.15.2: Faster Than Raw CSV Arrays](https://tilo-sloboda.medium.com/smartercsv-1-15-2-faster-than-raw-csv-arrays-benchmarks-zsv-and-the-full-pipeline-2c12a798032e) for benchmark background
 
 ## Performance
 
