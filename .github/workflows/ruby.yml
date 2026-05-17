@@ -28,7 +28,12 @@ jobs:
           - 3.3
           - "3.4"
           - "4.0"
-          - head
+          - ruby-head
+          - truffleruby
+          - truffleruby-head
+          - mingw
+          - jruby
+          - jruby-head
         exclude:
           - { os: ubuntu,  ruby: mingw }
           - { os: macos,   ruby: mingw }
