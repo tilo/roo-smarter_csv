@@ -4,6 +4,6 @@ require "roo"
 
 module Roo
   class SmarterCSV < Roo::Base
-    VERSION = "1.0.0.pre3"
+    VERSION = "1.0.0"
   end
 end
