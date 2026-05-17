@@ -3,6 +3,9 @@ require 'spec_helper'
 RSpec.describe Roo::SmarterCSV do
   let(:csv_path) { File.expand_path('../fixtures/sample.csv', __FILE__) }
   let(:tsv_path) { File.expand_path('../fixtures/sample.tsv', __FILE__) }
+  let(:bom_path) { File.expand_path('../fixtures/sample_bom.csv', __FILE__) }
+  let(:empty_path) { File.expand_path('../fixtures/empty.csv', __FILE__) }
+  let(:defaults_path) { File.expand_path('../fixtures/defaults.csv', __FILE__) }
   let(:csv) { Roo::SmarterCSV.new(csv_path) }
 
   describe 'Roo interface' do
@@ -65,16 +68,45 @@ RSpec.describe Roo::SmarterCSV do
   end
 
   describe 'Integration with Roo::Spreadsheet' do
+    it 'registers itself as Roo CSV handler' do
+      expect(Roo::CLASS_FOR_EXTENSION[:csv]).to eq(Roo::SmarterCSV)
+    end
+
     it 'can be opened via Roo::Spreadsheet.open' do
       spreadsheet = Roo::Spreadsheet.open(csv_path)
       expect(spreadsheet).to be_a(Roo::SmarterCSV)
       expect(spreadsheet.cell(2, 1)).to eq('John')
     end
 
+    it 'works with StringIO input' do
+      spreadsheet = Roo::Spreadsheet.open(StringIO.new(File.read(csv_path)), extension: :csv)
+      expect(spreadsheet).to be_a(Roo::SmarterCSV)
+      expect(spreadsheet.cell(2, 2)).to eq(30)
+    end
+
+    it 'reads files with a UTF-8 BOM' do
+      spreadsheet = Roo::Spreadsheet.open(bom_path)
+      expect(spreadsheet.cell(2, 1)).to eq('John')
+      expect(spreadsheet.cell(2, 4)).to eq(50000)
+    end
+
+    it 'treats an empty csv file as an error' do
+      expect { Roo::Spreadsheet.open(empty_path).cell(1, 1) }.to raise_error(SmarterCSV::EmptyFileError)
+    end
+
     it 'accepts csv_options from Roo and bridges them into SmarterCSV' do
       spreadsheet = Roo::Spreadsheet.open(tsv_path, extension: :csv, csv_options: { col_sep: "\t" })
       expect(spreadsheet.cell(2, 1)).to eq('John')
       expect(spreadsheet.cell(2, 4)).to eq(50000)
+    end
+
+    it 'uses SmarterCSV defaults when no options are supplied' do
+      spreadsheet = Roo::Spreadsheet.open(defaults_path)
+      expect(spreadsheet.cell(2, 2)).to eq('hello, world')
+      expect(spreadsheet.cell(2, 3)).to eq(30)
+      expect(spreadsheet.cell(2, 4)).to eq(1.5)
+      expect(spreadsheet.celltype(2, 3)).to eq(:numeric)
+      expect(spreadsheet.celltype(2, 4)).to eq(:float)
     end
 
     it 'prefers smarter_csv options over csv_options and emits a warning' do
