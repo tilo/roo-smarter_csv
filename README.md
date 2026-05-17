@@ -1,5 +1,7 @@
 # roo-smarter_csv
 
+![Gem Version](https://img.shields.io/gem/v/roo-smarter_csv) [![codecov](https://codecov.io/gh/tilo/roo-smarter_csv/branch/main/graph/badge.svg)](https://codecov.io/gh/tilo/roo-smarter_csv) [![Downloads](https://img.shields.io/gem/dt/roo-smarter_csv)](https://rubygems.org/gems/roo-smarter_csv) [![RubyGems](https://img.shields.io/badge/RubyGems-roo__smarter__csv-brightgreen?logo=rubygems&logoColor=white)](https://rubygems.org/gems/roo-smarter_csv) [![Ruby Toolbox](https://img.shields.io/badge/Ruby%20Toolbox-roo__smarter__csv-brightgreen)](https://www.ruby-toolbox.com/projects/roo-smarter_csv)
+
 `roo-smarter_csv` replaces Roo's CSV backend with [SmarterCSV](https://github.com/tilo/smarter_csv) while keeping the Roo spreadsheet API.
 
 ## What it does

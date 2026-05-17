@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["tilo.slobodal@gmail.com"]
   spec.summary       = "High-performance CSV support for Roo using SmarterCSV"
   spec.description   = "Extends Roo with SmarterCSV integration for robust, fast CSV parsing"
-  spec.homepage      = "https://github.com/yourusername/roo-smarter_csv"
+  spec.homepage      = "https://github.com/tilo/roo-smarter_csv"
   spec.license       = "MIT"
   spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/main/CHANGELOG.md"
 
