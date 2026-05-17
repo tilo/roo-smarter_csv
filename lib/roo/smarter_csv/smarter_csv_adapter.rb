@@ -2,7 +2,6 @@
 
 require "csv"
 require "date"
-require_relative "version"
 
 module Roo
   # Roo CSV adapter backed by SmarterCSV while preserving Roo's sheet-style API.

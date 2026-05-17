@@ -7,7 +7,7 @@ require_relative "lib/roo/smarter_csv/version"
 Gem::Specification.new do |spec|
   spec.name          = "roo-smarter_csv"
   spec.date          = Time.now.utc.strftime('%Y-%m-%d')
-  spec.version       = Roo::SmarterCSV::VERSION
+  spec.version       = ROO_SMARTER_CSV_VERSION
   spec.authors       = ["Tilo Sloboda"]
   spec.email         = ["tilo.slobodal@gmail.com"]
   spec.summary       = "High-performance CSV support for Roo using SmarterCSV"

@@ -2,6 +2,14 @@
 
 require "roo"
 require "smarter_csv"
+require_relative "roo/smarter_csv/version"
+
+module Roo
+  class SmarterCSV < Roo::Base
+    VERSION = ROO_SMARTER_CSV_VERSION
+  end
+end
+
 require_relative "roo/smarter_csv/smarter_csv_adapter"
 
 # Roo namespace extensions for the SmarterCSV-backed CSV adapter.
