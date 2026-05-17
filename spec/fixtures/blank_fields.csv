@@ -1,0 +1,4 @@
+id,first,last,address2,city,state,zip
+1,John,Doe,,Portland,OR,97201
+2,Jane,Smith,Apt 3,Seattle,WA,
+3,Bob,Jones,,,CA,90210

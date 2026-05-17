@@ -1,5 +1,36 @@
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 2.6.0
+
+Naming/FileName:
+  Exclude:
+    - "lib/roo-smarter_csv.rb"
+
+Metrics/ClassLength:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Naming/VariableNumber:
+  CheckSymbols: false
+
+Style/WhileUntilModifier:
+  Enabled: false
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes

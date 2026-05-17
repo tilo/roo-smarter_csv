@@ -4,6 +4,33 @@
 
 ## What it does
 
+- Uses [SmarterCSV](https://github.com/tilo/smarter_csv) for parsing CSV input
+- Uses SmarterCSV defaults unless overridden by Roo compatibility behavior or explicit options
+
+### SmarterCSV Benefits
+- **SmarterCSV is 3-4.6x faster than Roo::CSV**
+- SmarterCSV automatically detects `col_sep`, `row_sep`
+- SmarterCSV is more robust against real-world data
+
+## Performance
+
+Speedup vs Roo::CSV with SmarterCSV 1.17.1
+
+| File                           | Speedup |
+| ------------------------------ | ------: |
+| PEOPLE_IMPORT_B.csv            |   2.98x |
+| uscities.csv                   |   4.22x |
+| uszips.csv                     |   4.45x |
+| worldcities.csv                |   4.58x |
+| embedded_newlines_60k.csv      |   3.84x |
+| heavy_quoting_60k.csv          |   3.42x |
+| many_empty_fields_60k.csv      |   3.36x |
+| sample_100k.csv                |   3.17x |
+| sensor_data_50krows_50cols.csv |   3.23x |
+| tab_separated_60k.tsv          |   3.14x |
+| utf8_multibyte_60k.csv         |   3.17x |
+
+### Roo API
 - Keeps Roo's spreadsheet-style API:
   - `cell`
   - `celltype`
@@ -13,11 +40,9 @@
   - `parse`
   - `first_row` / `last_row`
   - `first_column` / `last_column`
-- Uses SmarterCSV for parsing CSV input
 - Preserves Roo's single-sheet CSV behavior
 - Supports Roo's `Roo::Spreadsheet.open(...)` entry point
 - Supports CSV export through Roo's existing `to_csv`
-- Uses SmarterCSV defaults unless you override them
 
 ## Installation
 
@@ -35,16 +60,13 @@ bundle install
 
 ## Activation
 
-Load Roo first, then load this gem:
-
 ```ruby
-require "roo"
 require "roo-smarter_csv"
 
 spreadsheet = Roo::Spreadsheet.open("data.csv")
 ```
 
-After `require "roo-smarter_csv"`, Roo will use `Roo::SmarterCSV` for `.csv` files.
+`require "roo-smarter_csv"` automatically loads both `roo` and `smarter_csv` and registers `Roo::SmarterCSV` as Roo's CSV handler.
 
 ## Supported behavior
 
@@ -72,7 +94,13 @@ That means:
 - Roo's public API remains spreadsheet-like
 - hash-based rows are only an intermediate step for parser-to-grid conversion
 
-## Option precedence
+## Options
+
+- SmarterCSV options are handled as nested options, e.g. `options = { smarter_csv: {} }`
+- `roo-smarter_csv` defaults the SmarterCSV option `remove_empty_hashes` to `false`, so that it is compatible with Roo.
+- `roo-smarter_csv` honors some of the `csv_options` from Roo, but we encourage that you pass those under `smarter_csv` options.
+
+### Option precedence
 
 `roo-smarter_csv` understands two option namespaces:
 
@@ -110,10 +138,11 @@ Only these four keys are copied from `csv_options` into the effective SmarterCSV
 ### Precedence rules
 
 1. Start with SmarterCSV defaults.
-2. Copy supported keys from `csv_options` into the SmarterCSV options.
-3. Apply `smarter_csv` on top.
-4. If the same key exists in both places, `smarter_csv` wins.
-5. Conflicts emit a warning.
+2. Apply `roo-smarter_csv` compatibility overrides.
+3. Copy supported keys from `csv_options` into the SmarterCSV options.
+4. Apply `smarter_csv` on top.
+5. If the same key exists in both places, `smarter_csv` wins.
+6. Conflicts emit a warning.
 
 Only the following Roo-compatible CSV keys are bridged from `csv_options`:
 
@@ -152,9 +181,13 @@ In this case, `smarter_csv[:col_sep]` wins and a warning is emitted.
 
 ## SmarterCSV defaults
 
-When you do not pass any options, SmarterCSV defaults are used.
+When you do not pass any options, `roo-smarter_csv` starts from SmarterCSV defaults and then applies one compatibility override for Roo:
 
-Some important defaults are:
+- `remove_empty_hashes: false`
+
+That override is intentional. Roo expects blank rows to remain addressable in the spreadsheet model, so `roo-smarter_csv` disables SmarterCSV's default behavior of dropping fully empty row hashes.
+
+Some important effective defaults are therefore:
 
 - `col_sep: :auto` — auto-detects the separator
 - `row_sep: :auto` — auto-detects line endings
@@ -162,10 +195,10 @@ Some important defaults are:
 - `downcase_header: true`
 - `strings_as_keys: false`
 - `convert_values_to_numeric: true`
-- `remove_empty_hashes: true`
+- `remove_empty_hashes: false` — `roo-smarter_csv` sets this for Roo compatibility so blank rows remain addressable through the spreadsheet API.
 - `headers_in_file: true`
 
-This means common CSV files work without extra configuration, and SmarterCSV can infer separators and convert numeric values automatically.
+This means common CSV files work without extra configuration, and SmarterCSV can infer separators and convert numeric values automatically while still preserving Roo-compatible blank rows.
 
 ### Default behavior examples
 
@@ -238,8 +271,8 @@ csv = Roo::Spreadsheet.open(
 csv = Roo::Spreadsheet.open(
   "data.csv",
   smarter_csv: {
-    remove_empty_hashes: true,
-    skip_empty_lines: true
+    col_sep: ";",
+    quote_char: '"'
   }
 )
 ```
@@ -250,6 +283,23 @@ csv = Roo::Spreadsheet.open(
 bundle install
 bundle exec rspec
 ```
+
+## Reporting Bugs / Feature Requests
+
+Please [open an Issue on GitHub](https://github.com/tilo/roo-smarter_csv/issues) if you have feedback, new feature requests, or want to report a bug. Thank you!
+
+For reporting issues, please:
+  * include a small sample CSV file
+  * open a pull-request adding a test that demonstrates the issue
+  * mention your version of SmarterCSV, Ruby, Rails
+
+## Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
 
 ## License
 
